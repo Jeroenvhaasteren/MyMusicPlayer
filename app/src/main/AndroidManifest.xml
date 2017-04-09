@@ -15,6 +15,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".MyMediaPlayerService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".SongDetails" />
+        <activity android:name=".PlayList"></activity>
     </application>
 
 </manifest>
