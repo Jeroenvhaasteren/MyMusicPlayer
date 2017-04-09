@@ -1,10 +1,18 @@
 package org.bts.atry.mymusicplayer;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,13 +23,15 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import static android.R.id.message;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private MyMediaPlayerService musicSrv;
     private boolean mMusicBound = false;
     private boolean mPaused = false;
-    private int mCurrentSong = 0;
+    private int mSongPlaying = MyMediaPlayerService.mSongPlaying;
     private static List<SongObj> PLAYLIST;
 
     private TextView tvTitle;
@@ -56,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //If start with a song from the playlist
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mCurrentSong = extras.getInt("song", 0);
+            mSongPlaying = extras.getInt("song", 0);
             setSongInfo();
             if(this.mPaused) {
                 PlayerController(MyMediaPlayerService.ACTION_RESUME, true);
@@ -64,12 +74,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 PlayerController(MyMediaPlayerService.ACTION_PLAY, true);
             }
         }
+
+        //Set up local broadcast receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("songPlaying"));
+
     }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            mSongPlaying = intent.getIntExtra("song",0);
+            setSongInfo();
+        }
+    };
 
     private void PlayerController(int mediaPlayerAction, Boolean setNewSong) {
         Intent intent = new Intent(this, MyMediaPlayerService.class);
         intent.putExtra(MyMediaPlayerService.PLAYER_ACTION, mediaPlayerAction);
-        if(setNewSong) intent.putExtra(MyMediaPlayerService.ACTION_SET, this.mCurrentSong);
+        if(setNewSong) intent.putExtra(MyMediaPlayerService.ACTION_SET, this.mSongPlaying);
         startService(intent);
         this.mMusicBound = true;
     }
@@ -79,8 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setSongInfo() {
-        tvTitle.setText(PLAYLIST.get(mCurrentSong).getTitle());
-        tvCountry.setText(PLAYLIST.get(mCurrentSong).getCountry());
+        tvTitle.setText(PLAYLIST.get(mSongPlaying).getTitle());
+        tvCountry.setText(PLAYLIST.get(mSongPlaying).getCountry());
     }
 
     @Override
@@ -90,13 +114,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_main_info:
                 Log.i(MainActivity.TAG,"info btn clicked");
                 Intent i = new Intent(getApplicationContext(), SongDetails.class);
-                i.putExtra("song", this.mCurrentSong);
+                i.putExtra("song", this.mSongPlaying);
                 startActivity(i);
                 break;
             case R.id.btn_main_prev:
                 Log.i(MainActivity.TAG,"prev btn clicked");
-                this.mCurrentSong--;
-                if(this.mCurrentSong < 0) {this.mCurrentSong = 0;}
+                this.mSongPlaying--;
+                if(this.mSongPlaying < 0) {this.mSongPlaying = 0;}
                 setSongInfo();
                 PlayerController(MyMediaPlayerService.ACTION_PREV, true);
                 break;
@@ -117,8 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_main_next:
                 Log.i(MainActivity.TAG,"next btn clicked");
-                this.mCurrentSong++;
-                if(this.mCurrentSong > (this.PLAYLIST.size() - 1) ) {this.mCurrentSong = 0;}
+                this.mSongPlaying++;
+                if(this.mSongPlaying > (this.PLAYLIST.size() - 1) ) {this.mSongPlaying = 0;}
                 setSongInfo();
                 PlayerController(MyMediaPlayerService.ACTION_NEXT, true);
                 break;
@@ -131,5 +155,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }

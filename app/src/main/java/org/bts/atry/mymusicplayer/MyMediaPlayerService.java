@@ -1,11 +1,15 @@
 package org.bts.atry.mymusicplayer;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -16,9 +20,10 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
     private final static String TAG = MyMediaPlayerService.class.getSimpleName();
     private MediaPlayer mediaPlayer;
     private List<SongObj> PLAYLIST;
-    private int mSongPlaying = 0;
+    public static int mSongPlaying = 0;
     private int mResumePosition;
 
+    //FLAGS
     public static final String PLAYER_ACTION = "playerAction";
     public static final String ACTION_SET = "setNewSong";
     public static final int ACTION_PLAY = 0;
@@ -85,10 +90,32 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
         return START_STICKY;
     }
 
+    private void sendMessage() {
+        Intent intent = new Intent("songPlaying");
+        intent.putExtra("song", this.mSongPlaying);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     private void startMediaPlayer() {
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
         mediaPlayer.setOnPreparedListener(this);
+    }
+
+    private void launchNotification() {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(PLAYLIST.get(mSongPlaying).getTitle())
+                .setContentText(PLAYLIST.get(mSongPlaying).getDescription().substring(0,65)+"...")
+                .setAutoCancel(true);
+
+        Intent notificationIntent = new Intent(this, SongDetails.class);
+        notificationIntent.putExtra("song", this.mSongPlaying);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mBuilder.setContentIntent(pendingIntent);
+        NotificationManager mNotificationManager = (NotificationManager) this .getSystemService(Service.NOTIFICATION_SERVICE);
+        //Change Notification id if you want to stack the notifications. I only want one
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     @Override
@@ -107,8 +134,12 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.w(MyMediaPlayerService.TAG,"Song is completed");
+        this.mSongPlaying++;
+        if(this.mSongPlaying > (this.PLAYLIST.size() - 1) ) {this.mSongPlaying = 0;}
         stopSong();
-        stopSelf();
+        this.mediaPlayer = MediaPlayer.create(this, GetSongSource());
+        playSong();
+        sendMessage();
     }
 
     //Handle errors
@@ -149,6 +180,8 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
+        launchNotification();
+        sendMessage();
     }
 
     private void stopSong() {
