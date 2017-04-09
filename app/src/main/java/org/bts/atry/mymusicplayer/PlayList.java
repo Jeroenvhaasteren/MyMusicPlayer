@@ -30,16 +30,16 @@ public class PlayList extends AppCompatActivity implements AdapterView.OnItemCli
         final ListView mListView = (ListView) this.findViewById(R.id.lv_playlist);
         mListView.setOnItemClickListener(this);
 
-
+        //Build the string title array for the listview
         ArrayList<String> mListArray = new ArrayList<>();
-        // Just populating the 'ArrayList' with the 'String[]'
         for (SongObj aSong : this.PLAYLIST)
         {
             mListArray.add(aSong.getTitle());
         }
         mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListArray));
-        registerForContextMenu(mListView);
 
+        //Bind context menu to list items
+        registerForContextMenu(mListView);
     }
 
     private void openMainActivity(int position) {
@@ -56,7 +56,7 @@ public class PlayList extends AppCompatActivity implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.i(PlayList.TAG, "Element " + position + ", with ID = " + id);
+        Log.i(PlayList.TAG, "Song: " + position + " is clicked");
         openMainActivity(position);
     }
 
@@ -64,6 +64,7 @@ public class PlayList extends AppCompatActivity implements AdapterView.OnItemCli
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
         super.onCreateContextMenu(menu, v, menuInfo);
+        //Inflate context menu
         MenuInflater mContMenuInflater = this.getMenuInflater();
         mContMenuInflater.inflate(R.menu.context_menu_playlist, menu);
     }
@@ -71,8 +72,11 @@ public class PlayList extends AppCompatActivity implements AdapterView.OnItemCli
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
+        //Get information from list items long clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int listPosition = info.position;
+
+        //Switch statement What contextmenu items is clicked
         if (item.getItemId() == R.id.cbtn_playlist_play)
         {
             Log.i(PlayList.TAG, "Play btn Clicked of " + listPosition);

@@ -6,6 +6,9 @@ import java.util.List;
 
 /**
  * Created by Jeroen on 06/04/2017.
+ *
+ * Data file of all the raw songs included in the project
+ *
  */
 
 class DataResourcesSong {
@@ -21,38 +24,14 @@ class DataResourcesSong {
 
     public DataResourcesSong() {}
 
-    public List<SongObj> getSongObjs(){
-        return PLAYLIST;
-    }
-
-    public SongObj getFirst(){
-        return PLAYLIST.get(0);
-    }
-
+    //Get one specific song
     public  SongObj getSong(int index) {
         return PLAYLIST.get(index);
     }
 
+    //Get all the songs
     public List<SongObj> getPlaylist() {
         return PLAYLIST;
-    }
-
-    public SongObj getNext(SongObj currentSongObj){
-        int currentIndex = PLAYLIST.indexOf(currentSongObj);
-        if (currentIndex == PLAYLIST.size() - 1){
-            return PLAYLIST.get(0);
-        } else {
-            return PLAYLIST.get(currentIndex + 1);
-        }
-    }
-
-    public SongObj getPrev(SongObj currentSongObj){
-        int currentIndex = PLAYLIST.indexOf(currentSongObj);
-        if (currentIndex == 0){
-            return PLAYLIST.get(PLAYLIST.size() - 1);
-        } else {
-            return PLAYLIST.get(currentIndex - 1);
-        }
     }
 
 }

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CurrentSong"
+        android:text="@string/currentsong"
         android:textAlignment="center"
         android:textSize="30sp"
         android:id="@+id/tv_main_title" />
@@ -19,9 +19,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Origin"
+        android:text="@string/origin"
         android:textAlignment="center"
         android:textSize="18sp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
         android:id="@+id/tv_main_country"
         android:layout_below="@id/tv_main_title"
         android:layout_alignParentLeft="true"

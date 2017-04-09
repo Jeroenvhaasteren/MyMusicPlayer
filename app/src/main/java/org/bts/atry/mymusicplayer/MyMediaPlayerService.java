@@ -17,8 +17,10 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
     private final static String TAG = MyMediaPlayerService.class.getSimpleName();
     private MediaPlayer mediaPlayer;
     private List<SongObj> PLAYLIST;
-    public static int mSongPlaying = 0;
     private int mResumePosition;
+
+    //Static field
+    public static int mSongPlaying = 0;
 
     //FLAGS
     public static final String PLAYER_ACTION = "playerAction";
@@ -28,8 +30,6 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
     public static final int ACTION_RESUME = 2;
     public static final int ACTION_NEXT = 3;
     public static final int ACTION_PREV = 4;
-
-
 
     public MyMediaPlayerService() {}
 
@@ -54,19 +54,19 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
                 playSong();
                 break;
             case MyMediaPlayerService.ACTION_NEXT:
-                Log.w(MyMediaPlayerService.TAG,"Play Next");
+                Log.i(MyMediaPlayerService.TAG,"Play Next");
                 stopSong();
                 this.mediaPlayer = MediaPlayer.create(this, GetSongSource());
                 playSong();
                 break;
             case MyMediaPlayerService.ACTION_PREV:
-                Log.w(MyMediaPlayerService.TAG,"Play Prev");
+                Log.i(MyMediaPlayerService.TAG,"Play Prev");
                 stopSong();
                 this.mediaPlayer = MediaPlayer.create(this, GetSongSource());
                 playSong();
                 break;
             case MyMediaPlayerService.ACTION_PAUSE:
-                Log.w(MyMediaPlayerService.TAG,"Pauze");
+                Log.i(MyMediaPlayerService.TAG,"Pauze");
                 pauseSong();
                 break;
             case MyMediaPlayerService.ACTION_RESUME:
@@ -120,7 +120,7 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
         super.onDestroy();
         stopSong();
         if (this.mediaPlayer != null) this.mediaPlayer.release();
-        Log.e(TAG, "onDestroy");
+        Log.i(TAG, "onDestroy");
     }
 
     @Override
@@ -130,12 +130,14 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.w(MyMediaPlayerService.TAG,"Song is completed");
+        Log.i(MyMediaPlayerService.TAG,"Song is completed");
+        //Song is finished start next one
         this.mSongPlaying++;
         if(this.mSongPlaying > (this.PLAYLIST.size() - 1) ) {this.mSongPlaying = 0;}
         stopSong();
         this.mediaPlayer = MediaPlayer.create(this, GetSongSource());
         playSong();
+        //Let main activity know next sond started
         sendMessage();
     }
 
@@ -194,6 +196,5 @@ public class MyMediaPlayerService extends Service implements MediaPlayer.OnCompl
             mResumePosition = mediaPlayer.getCurrentPosition();
         }
     }
-
 }
 

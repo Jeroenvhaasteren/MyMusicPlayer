@@ -6,11 +6,13 @@ package org.bts.atry.mymusicplayer;
 
 public class SongObj {
 
+    // Object Fields/Properties
     private String mTitle;
     private int mDataFile;
     private String mCountry;
     private String mDescription;
 
+    //Object constructor
     public SongObj(String title, int resource, String country, String description) {
         this.mTitle = title;
         this.mDataFile = resource;
@@ -22,6 +24,7 @@ public class SongObj {
         return mTitle;
     }
 
+    //Getters and Setters
     public void setTitle(String title) {
         this.mTitle = title;
     }

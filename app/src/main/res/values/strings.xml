@@ -5,4 +5,6 @@
     <string name="popmenu_add_text">SongOptions</string>
     <string name="contextmenu_like_text">Play</string>
     <string name="contextmenu_dislike_text">Details</string>
+    <string name="currentsong">No song selected</string>
+    <string name="origin"></string>
 </resources>
