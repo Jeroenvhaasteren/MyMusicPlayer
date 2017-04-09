@@ -1,17 +1,9 @@
 package org.bts.atry.mymusicplayer;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.media.MediaPlayer;
-import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,15 +15,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import static android.R.id.message;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private MyMediaPlayerService musicSrv;
     private boolean mMusicBound = false;
     private boolean mPaused = false;
-    private int mSongPlaying = MyMediaPlayerService.mSongPlaying;
+    private int mSongPlaying;
     private static List<SongObj> PLAYLIST;
 
     private TextView tvTitle;
@@ -159,7 +149,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        if(isFinishing()) {
+            Intent intent = new Intent(this, MyMediaPlayerService.class);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+            stopService(intent);
+        }
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        this.mSongPlaying = MyMediaPlayerService.mSongPlaying;
+        setSongInfo();
+        super.onResume();
     }
 }

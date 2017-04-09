@@ -2,4 +2,7 @@
     <string name="app_name">MyMusicPlayer</string>
     <string name="btn_main_info">Info</string>
     <string name="playlist">Playlist</string>
+    <string name="popmenu_add_text">SongOptions</string>
+    <string name="contextmenu_like_text">Play</string>
+    <string name="contextmenu_dislike_text">Details</string>
 </resources>

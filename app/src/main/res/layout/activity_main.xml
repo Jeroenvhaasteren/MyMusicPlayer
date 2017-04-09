@@ -27,24 +27,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:text="@string/btn_main_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/btn_main_info" />
-
-    <Button
-        android:text="@string/playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btn_main_info"
-        android:layout_toRightOf="@+id/btn_main_info"
-        android:layout_toEndOf="@+id/btn_main_info"
-        android:id="@+id/btn_main_playlist"
-        android:layout_alignTop="@+id/btn_main_info" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -83,6 +65,34 @@
             android:id="@+id/btn_main_next"
             android:layout_weight="1" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="15dp">
+
+        <Button
+            android:text="@string/playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_main_playlist"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tv_main_country"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="@string/btn_main_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_main_info"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_weight="1" />
     </LinearLayout>
 
 </RelativeLayout>
